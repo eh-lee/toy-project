@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <title>git 연습해보기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap" rel="stylesheet">
+
+    <style>
+        .mytitle {
+            width: 100%;
+            height: 300px;
+
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://p4.wallpaperbetter.com/wallpaper/565/506/328/sports-wallpaper-preview.jpg');
+            background-position: center;
+            background-size: cover;
+
+            color: white;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            font-family: 'Orbitron', sans-serif;
+
+        }
+        .accordion {
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            width: 35%;
+            margin: 20px auto;
+        }
+        .youtube{
+            font-family: 'Do Hyeon', sans-serif;
+            float: right;
+            width: 27%;
+            max-width: 500px;
+            margin: 0px 30px 0px 20px;
+            padding: 20px;
+            box-shadow: 0px 0px 5px 0px gray;
+
+            height : 100%;
+
+            text-align: center;
+        }
+        .accordion-youtube{
+            width : 340px;
+        }
+        .list-group{
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            width: 300px;
+            margin: auto auto 20px auto;
+        }
+        .counting-board {
+            font-family: 'Orbitron', sans-serif;
+            float: left;
+            width: 27%;
+            max-width: 500px;
+            margin: 0px 20px 20px 30px;
+            padding: 20px;
+            box-shadow: 0px 0px 5px 0px gray;
+
+            height : 100%;
+
+            text-align: center;
+        }
+        .mypost {
+            width: 95%;
+            max-width: 500px;
+            margin: 20px auto 0px auto;
+            padding: 20px;
+            box-shadow: 0px 0px 5px 0px gray;
+        }
+
+        .post-reps {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px 0 5px;
+            width: 100%;
+        }
+        .strong{
+            width:98%;
+            margin: 0 auto 0 10px;
+        }
+        .form-select {
+            max-width: 95%;
+            width: 215px;
+            height: 58px;
+            margin-right: 10px;
+        }
+
+        .form-floating {
+            width: 96%;
+            margin: 15px auto 15px auto;
+        }
+
+        .btn-primary{
+            height: 40px;
+            border-radius: 5px;
+            margin: 0 10px 0px 10px;
+        }
+        .top-page {
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            width: 100%;
+        }
+        .list-group > li{
+            height: 47px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script>
+        let count_running = 0
+        let count_jogging = 0
+        let count_stretching = 0
+        let count_coding = 0
+
+        let count_pushup = 0
+        let count_situp = 0
+        let count_squat = 0
+        let count_chinup = 0
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "http://spartacodingclub.shop/sparta_api/weather/seoul",
+                data: {},
+                success: function (response) {
+                    $('#temp').text(response['temp'])
+                }
+            })
+        });
+        $(document).ready(function () {
+            listing();
+            show_youtube();
+            recording();
+        });
+        function listing() {
+            $.ajax({
+                type: 'GET',
+                url: '/dashboard',
+                data: {},
+                success: function (response) {
+                    let dash = response['dashboards']
+                    for (let i = 0; i < dash.length; i++) {
+                        let type = dash[i]['type']
+                        let sets = dash[i]['sets']
+                        let reps = dash[i]['reps']
+                        let comments = dash[i]['comments']
+                        let hearts = dash[i]['hearts']
+                        let heart_image = '‍🔥'.repeat(hearts)
+                        let num = dash[i]['num']
+                        let done = dash[i]['done']
+
+                        let index = String(i)
+
+                        let temp_html = ``
+
+                        if(done == 0){
+                            let today = new Date();
+                            let year = today.getFullYear();
+                            let month = today.getMonth() + 1;
+                            let date = today.getSeconds();
+                            let nowday = (year + '.' + month + '.' + date)
+                            temp_html = `<div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingTwo${index}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                        data-bs-target="#collapseTwo${index}" aria-expanded="false" aria-controls="collapseTwo${index}">
+                                                    ${type} ${sets} ${reps}
+                                                </button>
+                                            </h2>
+                                            <div id="collapseTwo${index}" class="accordion-collapse collapse" aria-labelledby="headingTwo${index}"
+                                                 data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                     <p style="margin: 5px 0 5px 0;"><strong>작성 날짜 :</strong> ${nowday} </p>
+                                                     <p style="margin: 5px 0 5px 0;"><strong>운동 강도 :</strong>  ${heart_image}  </p>
+                                                     <p style="margin: 5px 0 5px 0;"><strong>작성 기록 :</strong> <i>${comments}</i> <p align="right"><button onclick="del_dash(${num})" style="border-radius: 5px; background-color: #d33; padding: 5px 10px 5px 10px; color: white; margin: 2px;">기록 지우기</button></p></p>
+                                                </div>
+                                            </div>
+                                        </div>`
+                        }else {
+                            if( `${type}` == '달리기'){
+                                count_running -= parseInt(`${sets}`) * parseInt(`${reps}`)
+                            }else if( `${type}` == '코딩'){
+                                count_coding -= parseInt(`${sets}`) * parseInt(`${reps}`)
+                            }else if( `${type}` == '조깅'){
+                                count_jogging -= parseInt(`${sets}`) * parseInt(`${reps}`)
+                            }else if( `${type}` == '스트레칭'){
+                                count_stretching -= parseInt(`${sets}`) * parseInt(`${reps}`)
+                            }else if( `${type}` == '턱걸이'){
+                                count_chinup -= parseInt(`${sets}`) * parseInt(`${reps}`)
+                            }else if( `${type}` == '윗몸일으키기'){
+                                count_situp -= parseInt(`${sets}`) * parseInt(`${reps}`)
+                            }else if( `${type}` == '팔굽혀펴기'){
+                                count_pushup -= parseInt(`${sets}`) * parseInt(`${reps}`)
+                            }else{
+                                count_squat -= parseInt(`${sets}`) * parseInt(`${reps}`)
+                            }
+
+                        }
+                        $('#accordionExample').append(temp_html)
+                    }
+                }
+            })
+        }
+        function del_dash(num) {
+            $.ajax({
+                type: "POST",
+                url: "/dashboard/delete",
+                data: { num_give: num },
+                success: function (response) {
+
+                    del_Board(response["msg"])
+                }
+            });
+        }
+        function del_Board(seq){
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: '선택한 코멘트가 삭제되었습니다!',
+                showConfirmButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: '다시 기록해볼까요?'
+            }).then((result) => {
+                if (result.value) {
+                    window.location.reload()
+                }
+            })
+        }
+        function show_youtube() {
+            let youtubelink = ['https://www.youtube.com/embed/cbuZfY2S2UQ', "https://www.youtube.com/embed/X5d-t2wyWk4", 'https://www.youtube.com/embed/-_DUjHxgmWk', "https://www.youtube.com/embed/tfwbpv6gCbg", "https://www.youtube.com/embed/a4mcRL99pU0", "https://www.youtube.com/embed/1Tjig_BRVVs", "https://www.youtube.com/embed/VhfJB-VQOfg", "https://www.youtube.com/embed/yyjOhsNEqtE"]
+            let youtube_embed_name = ['코딩 (코딩할 때 듣기 좋은 노래)','조깅 (조깅 입문 영상)', '팔굽혀펴기 (바벨라토르 홈트레이닝)','윗몸일으키기 (지피티 복근운동)','맨몸스쿼트 (피카토 재활 스쿼트 영상)','달리기 (달리기, 호흡부터 중요한 이유?)','턱걸이 (핏블리 광배자극 제대로 영상)','스트레칭 (힙으뜸 완벽 스트레칭 영상)']
+            for (let i = 0; i < youtubelink.length; i++) {
+                let youtube_embed = youtubelink[i].toString();
+                let embed_name = youtube_embed_name[i].toString();
+
+                let index = i.toString();
+
+                let health_html = `
+                        <div class="accordion-item">
+            <h2 class="accordion-header" id="health_heading${index}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse_health_${index}" aria-expanded="true" aria-controls="collapse_health_${index}">
+                    ${embed_name}
+                </button>
+            </h2>
+            <div id="collapse_health_${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                   <p align="middle"> <iframe width="280" height="167" src="${youtube_embed}" title="YouTube video player"
+                             frameborder="0"
+                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                             allowfullscreen></iframe></p>
+                     <div class="input-group mb-3">
+</div>
+                </div>
+            </div>
+        </div>`
+                $('#accordionExample2').append(health_html)
+
+            }
+        }
+        function recording() {
+            $.ajax({
+                type: 'GET',
+                url: '/dashboard',
+                data: {},
+                success: function (response) {
+                    let dashboard = response['dashboards']
+                    let type_list = []
+                    let set_list = []
+                    let reps_list = []
+
+                    for (let i = 0; i < dashboard.length; i++) {
+                        type_list.push(dashboard[i]['type'])
+                        set_list.push(dashboard[i]['sets'])
+                        reps_list.push(dashboard[i]['reps'])
+                    }
+                    for (let i = 0; i < dashboard.length; i++) {
+                        if (type_list[i] == '달리기') {
+                            var regex = /[^0-9]/g;
+                            count_running += parseInt(reps_list[i].replace(regex, "")) * parseInt(set_list[i].replace(regex, ""))
+                        } else if (type_list[i] == '코딩') {
+                            var regex = /[^0-9]/g;
+                            count_coding += parseInt(reps_list[i].replace(regex, "")) * parseInt(set_list[i].replace(regex, ""))
+                        } else if (type_list[i] == '조깅') {
+                            var regex = /[^0-9]/g;
+                            count_jogging += parseInt(reps_list[i].replace(regex, "")) * parseInt(set_list[i].replace(regex, ""))
+                        } else if (type_list[i] == '스트레칭') {
+                            var regex = /[^0-9]/g;
+                            count_stretching += parseInt(reps_list[i].replace(regex, "")) * parseInt(set_list[i].replace(regex, ""))
+                        } else if (type_list[i] == '팔굽혀펴기') {
+                            count_pushup += parseInt(reps_list[i].replace(regex, "")) * parseInt(set_list[i].replace(regex, ""))
+                        } else if (type_list[i] == '윗몸일으키기') {
+                            count_situp += parseInt(reps_list[i].replace(regex, "")) * parseInt(set_list[i].replace(regex, ""))
+                        } else if (type_list[i] == '턱걸이') {
+                            count_chinup += parseInt(reps_list[i].replace(regex, "")) * parseInt(set_list[i].replace(regex, ""))
+                        } else if (type_list[i] == '맨몸스쿼트') {
+                            count_squat += parseInt(reps_list[i].replace(regex, "")) * parseInt(set_list[i].replace(regex, ""))
+                        }
+                    }
+                    let record_temp = ``
+                    if (count_running != 0) {
+                        record_temp = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                        달리기
+                                        <span class="badge bg-primary rounded-pill">${count_running} 분</span>
+                                      </li>`
+                        $('#list-group').append(record_temp)
+                    }
+                    if (count_coding != 0) {
+                        record_temp = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                        코딩
+                                        <span class="badge bg-primary rounded-pill">${count_coding} 분</span>
+                                      </li>`
+                        $('#list-group').append(record_temp)
+                    }
+                    if (count_pushup != 0) {
+                        record_temp = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                        팔굽혀펴기
+                                        <span class="badge bg-primary rounded-pill">${count_pushup} 회</span>
+                                      </li>`
+                        $('#list-group').append(record_temp)
+                    }
+                    if (count_situp != 0) {
+                        record_temp = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                        윗몸일으키기
+                                        <span class="badge bg-primary rounded-pill">${count_situp} 회</span>
+                                      </li>`
+                        $('#list-group').append(record_temp)
+                    }
+                    if (count_squat != 0) {
+                        record_temp = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                        맨몸스쿼트
+                                        <span class="badge bg-primary rounded-pill">${count_squat} 회</span>
+                                      </li>`
+                        $('#list-group').append(record_temp)
+                    }
+                    if (count_jogging != 0) {
+                        record_temp = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                       조깅
+                                        <span class="badge bg-primary rounded-pill">${count_jogging} 분</span>
+                                      </li>`
+                        $('#list-group').append(record_temp)
+                    }
+                    if (count_chinup != 0) {
+                        record_temp = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                       턱걸이
+                                        <span class="badge bg-primary rounded-pill">${count_chinup} 회</span>
+                                      </li>`
+                        $('#list-group').append(record_temp)
+                    }
+                    if (count_stretching != 0) {
+                        record_temp = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                       스트레칭
+                                        <span class="badge bg-primary rounded-pill">${count_stretching} 분</span>
+                                      </li>`
+                        $('#list-group').append(record_temp)
+                    }
+                }
+            })
+        }
+        function posting() {
+
+            let type = $('#type option:selected').text()
+            let sets = $('#sets option:selected').text()
+            let reps = $('#floatingInputValue').val()
+            let comments = $('#floatingTextarea2').val()
+            let hearts = $('#heart').val()
+
+            $.ajax({
+                type: 'POST',
+                url: '/dashboard',
+                data: {type_give: type, sets_give: sets, reps_give: reps, comments_give: comments, heart_give: hearts},
+                success: function (response) {
+                    if (response['msg'] == '1') {
+                        deleteBoard(response['msg'])
+                    }else{
+                        successBoard(response['msg'])
+                    }
+                }
+            });
+        }
+        function deleteBoard(seq){
+            Swal.fire({
+                title: '코멘트를 남기지 않았어요!',
+                text: "항해인들을 위해 운동꿀팁을 남겨주세요 :)",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: '새로 고치기',
+                cancelButtonText: '남기러 가기'
+            }).then((result) => {
+                if (result.value) {
+                    window.location.reload()
+                }
+            })
+        }
+        function successBoard(seq){
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: '회원님, 한 세트 더 하셔야죠?',
+                showConfirmButton: true,
+                confirmButtonColor:'#3085d6',
+                confirmButtonText: '한 세트 더 하러 가기'
+            }).then((result) => {
+                if (result.value) {
+                    window.location.reload()
+                }
+            })
+        }
+    </script>
+</head>
+
+<body>
+<div class=mytitle>
+    <h1>Sparta 13기 Gym Rats</h1>
+    <p>현재기온 : <span id="temp">00.0</span>도</p>
+    <h5> "물만 먹어도 살찌는 경우는 가슴에 손 얹고 곰곰히 생각해보셔야 합니다. </h5>
+    <h5> 내가 뭘 물처럼 먹었는가."</h5>
+</div>
+<div class=top-page>
+    <div class = youtube>
+        <h1>운동 추천영상!</h1>
+        <h4>영상보면서 따라해보아요 :)</h4>
+        <div class="accordion-youtube" id="accordionExample2"></div>
+    </div>
+    <div class = counting-board>
+        <h1>RECORDS</h1>
+        <h4>항해인들의 총 운동기록!</h4>
+        <ul id="list-group" class="list-group"></ul>
+    </div>
+    <div class=mypost>
+        <div class=post-reps>
+            <select id='type' class="form-select" aria-label="Default select example">
+                <option selected>종목</option>
+                <option value="1">코딩</option>
+                <option value="2">조깅</option>
+                <option value="3">팔굽혀펴기</option>
+                <option value="4">윗몸일으키기</option>
+                <option value="5">맨몸스쿼트</option>
+                <option value="6">달리기</option>
+                <option value="7">턱걸이</option>
+                <option value="7">스트레칭</option>
+            </select>
+            <select id='sets' class="form-select" aria-label="Default select example">
+                <option selected>세트</option>
+                <option value="1">5 sets</option>
+                <option value="2">4 sets</option>
+                <option value="3">3 sets</option>
+                <option value="4">2 sets</option>
+                <option value="5">1 sets</option>
+            </select>
+        </div>
+        <form class="form-floating">
+            <input type="email" class="form-control" id="floatingInputValue" placeholder="코딩/조깅/달리기/스트레칭 -> 00분"
+                   value="10회" maxlength="3">
+            <label for="floatingInputValue">세트당 횟수 or 시간 입력 ex) 20회,30분</label>
+        </form>
+        <div class = 'strong'>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01"> 강도 </label>
+                <select class="form-select" id="heart">
+                    <option selected> --운동 강도 선택--</option>
+                    <option value="1">️‍🔥</option>
+                    <option value="2">️‍🔥️‍🔥</option>
+                    <option value="3">️‍🔥️‍🔥️‍🔥</option>
+                    <option value="4">🔥️‍🔥️‍🔥️‍🔥</option>
+                    <option value="5">️‍🔥️‍🔥️‍🔥️‍🔥️‍🔥</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                      style="height: 100px"></textarea>
+            <label for="floatingTextarea2">운동소감 및 꿀팁🍯</label>
+        </div>
+        <button onclick="posting()" type="button" class="btn-primary" style="border-radius: 5px;padding: 5px 10px 5px 10px;">운동 기록하기</button>
+    </div>
+
+</div>
+<div class="accordion" id="accordionExample"></div>
+</body>
+</html>
